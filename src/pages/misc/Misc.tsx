@@ -10,11 +10,25 @@ export function LoginLogsPage() {
   const columns: ProColumns<any>[] = [
     { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
     { title: t('fields.userId'), dataIndex: 'user_id', width: 90 },
-    { title: t('fields.client'), dataIndex: 'client', width: 130 },
+    {
+      title: t('fields.client'),
+      dataIndex: 'client',
+      width: 130,
+      render: (_, r) =>
+        r.client && r.client !== '-'
+          ? t(`values.${r.client}`, { defaultValue: r.client })
+          : '-',
+    },
     { title: t('fields.deviceId'), dataIndex: 'device_id', search: false, width: 150 },
-    { title: t('fields.uuid'), dataIndex: 'uuid', search: false, ellipsis: true },
     { title: t('fields.ip'), dataIndex: 'ip', width: 140 },
-    { title: t('fields.type'), dataIndex: 'type', width: 110, search: false },
+    {
+      title: t('fields.type'),
+      dataIndex: 'type',
+      width: 110,
+      search: false,
+      render: (_, r) =>
+        r.type ? t(`values.${r.type}`, { defaultValue: r.type }) : '-',
+    },
     { title: t('fields.os'), dataIndex: 'platform', width: 110, search: false },
     { title: t('fields.createdAt'), dataIndex: 'created_at', search: false, width: 170 },
   ];
@@ -26,7 +40,7 @@ export function LoginLogsPage() {
       canCreate={false}
       canEdit={false}
       canBatchDelete
-      scrollX={1300}
+      scrollX={1090}
       formItems={null}
     />
   );

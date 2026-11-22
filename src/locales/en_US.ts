@@ -208,6 +208,7 @@ const enUS = {
     profile: 'Profile',
     userDesc: 'Accounts, roles and sign-in status',
     peerDesc: 'Registered devices and their owners',
+    settingsDesc: 'Server addresses, public key and client onboarding',
     groupDesc: 'Grant permissions by user group',
     deviceGroupDesc: 'Group devices for quicker filtering',
     tagDesc: 'Tag devices to find them faster',
@@ -262,10 +263,25 @@ const enUS = {
     actionNew: 'Connected',
     actionClose: 'Disconnected',
   },
+  values: {
+    account: 'Account',
+    webadmin: 'Web admin',
+    cli: 'Client',
+  },
   settings: {
     server: 'Server configuration',
     app: 'Application configuration',
     key: 'Public key',
+    idServer: 'ID server',
+    relayServer: 'Relay server',
+    apiServer: 'API address',
+    webClient: 'Web client',
+    serverHint:
+      'These are the internal addresses. Clients should use the configuration below. To change them, edit conf/config.yaml on the server and restart the service.',
+    clientConfig: 'Client configuration',
+    clientHint:
+      'Enter the same address and public key under Settings → Network in the client, or simply use the installer from this page (already preconfigured).',
+    downloadClient: 'Download client',
   },
 };
 

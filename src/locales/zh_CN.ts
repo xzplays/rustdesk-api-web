@@ -206,6 +206,7 @@ const zhCN = {
     profile: '个人资料',
     userDesc: '账号、角色与启用状态',
     peerDesc: '已注册设备及其归属账号',
+    settingsDesc: '服务端地址、公钥与客户端接入信息',
     groupDesc: '按用户组批量授权',
     deviceGroupDesc: '给设备分组，便于筛选',
     tagDesc: '为设备打标签，快速定位',
@@ -259,10 +260,23 @@ const zhCN = {
     actionNew: '建立连接',
     actionClose: '断开连接',
   },
+  values: {
+    account: '账号登录',
+    webadmin: '网页后台',
+    cli: '客户端',
+  },
   settings: {
     server: '服务端配置',
     app: '应用配置',
     key: '公钥',
+    idServer: 'ID 服务器',
+    relayServer: '中继服务器',
+    apiServer: 'API 地址',
+    webClient: 'Web 客户端',
+    serverHint: '以上为服务端内部地址，客户端请使用下方配置。修改需编辑服务器上的 conf/config.yaml 并重启服务。',
+    clientConfig: '客户端配置',
+    clientHint: '在客户端「设置 → 网络」中填入同样的地址与公钥，或直接使用本页提供的客户端安装包（已内置）。',
+    downloadClient: '下载客户端',
   },
 };
 

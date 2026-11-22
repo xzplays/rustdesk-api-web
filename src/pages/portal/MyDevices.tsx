@@ -84,7 +84,7 @@ export default function MyDevicesPage() {
           <Space key="dl" size="middle">
             <Button
               icon={<DownloadOutlined />}
-              href="/dl/RustDesk-xzplay-portable.zip"
+              href="/dl/"
               target="_blank"
               rel="noreferrer"
             >
@@ -118,4 +118,5 @@ export default function MyDevicesPage() {
     </PageContainer>
   );
 }
+
 

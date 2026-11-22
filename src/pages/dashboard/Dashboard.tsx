@@ -60,7 +60,7 @@ export default function DashboardPage() {
         <Button
           key="dl"
           icon={<DownloadOutlined />}
-          href="/dl/RustDesk-xzplay-portable.zip"
+          href="/dl/"
           target="_blank"
           rel="noreferrer"
         >
@@ -138,4 +138,5 @@ export default function DashboardPage() {
     </PageContainer>
   );
 }
+
 
