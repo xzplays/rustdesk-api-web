@@ -33,6 +33,7 @@ const menus = [
   { path: '/tags', name: '标签', icon: <TagsOutlined /> },
   { path: '/address-books', name: '地址簿', icon: <BookOutlined /> },
   { path: '/collections', name: '地址簿收藏', icon: <ShareAltOutlined /> },
+  { path: '/collection-rules', name: '收藏规则', icon: <AuditOutlined /> },
   { path: '/audit-login', name: '登录审计', icon: <LoginOutlined /> },
   { path: '/audit-conn', name: '连接审计', icon: <ApiOutlined /> },
   { path: '/audit-file', name: '文件传输审计', icon: <DeploymentUnitOutlined /> },
