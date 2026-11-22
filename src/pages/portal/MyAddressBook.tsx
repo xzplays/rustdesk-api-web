@@ -11,8 +11,18 @@ export default function MyAddressBookPage() {
     { title: t('fields.peerId'), dataIndex: 'id', copyable: true, width: 150 },
     { title: t('fields.alias'), dataIndex: 'alias', width: 140 },
     { title: t('fields.hostname'), dataIndex: 'hostname', width: 160 },
-    { title: t('fields.username'), dataIndex: 'username', width: 120 },
-    { title: t('fields.os'), dataIndex: 'platform', width: 120 },
+    {
+      title: t('fields.username'),
+      dataIndex: 'username',
+      width: 120,
+      responsive: ['lg'],
+    },
+    {
+      title: t('fields.os'),
+      dataIndex: 'platform',
+      width: 120,
+      responsive: ['md'],
+    },
     {
       title: t('nav.tags'),
       dataIndex: 'tags',

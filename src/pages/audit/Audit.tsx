@@ -10,9 +10,9 @@ export function AuditLoginPage() {
   const reasonEnum = Object.fromEntries(AUDIT_REASONS.map((r) => [r, { text: reasonLabel(r, t) }]));
 
   const columns: ProColumns<any>[] = [
-    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
+    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false, responsive: ['md'] },
     { title: t('fields.peerId'), dataIndex: 'guid', width: 150 },
-    { title: t('fields.uuid'), dataIndex: 'uuid', search: false, ellipsis: true },
+    { title: t('fields.uuid'), dataIndex: 'uuid', search: false, ellipsis: true, responsive: ['lg'] },
     { title: t('fields.ip'), dataIndex: 'ip', width: 140 },
     { title: t('fields.username'), dataIndex: 'username', width: 120 },
     { title: t('fields.userId'), dataIndex: 'user_id', width: 90, search: false },
@@ -56,7 +56,7 @@ export function AuditConnPage() {
   const { t } = useTranslation();
 
   const columns: ProColumns<any>[] = [
-    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
+    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false, responsive: ['md'] },
     {
       title: t('fields.action'),
       dataIndex: 'action',
@@ -99,7 +99,7 @@ export function AuditFilePage() {
   const { t } = useTranslation();
 
   const columns: ProColumns<any>[] = [
-    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
+    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false, responsive: ['md'] },
     { title: t('fields.peerId'), dataIndex: 'peer_id', width: 150 },
     { title: t('fields.fromPeer'), dataIndex: 'from_peer', search: false, width: 150 },
     { title: t('fields.path'), dataIndex: 'path', ellipsis: true },

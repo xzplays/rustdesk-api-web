@@ -6,7 +6,7 @@ import {
   StatisticCard,
 } from '@ant-design/pro-components';
 import { Pie } from '@ant-design/charts';
-import { Button, Space, Tag } from 'antd';
+import { Button, Grid, Tag } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../auth';
@@ -25,6 +25,8 @@ async function countOf(module: string) {
 export default function DashboardPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
   const [counts, setCounts] = useState({ users: 0, peers: 0, ab: 0, tokens: 0 });
   const [recent, setRecent] = useState<any[]>([]);
 
@@ -68,73 +70,73 @@ export default function DashboardPage() {
         </Button>,
       ]}
     >
-      <Space orientation="vertical" size={16} style={{ width: '100%' }}>
-        <StatisticCard.Group>
-          <StatisticCard statistic={{ title: t('dashboard.users'), value: counts.users }} />
-          <StatisticCard statistic={{ title: t('dashboard.peers'), value: counts.peers }} />
-          <StatisticCard statistic={{ title: t('dashboard.addressBooks'), value: counts.ab }} />
-          <StatisticCard statistic={{ title: t('dashboard.tokens'), value: counts.tokens }} />
-        </StatisticCard.Group>
+      <div className="rd-stat-grid">
+        <StatisticCard statistic={{ title: t('dashboard.users'), value: counts.users }} />
+        <StatisticCard statistic={{ title: t('dashboard.peers'), value: counts.peers }} />
+        <StatisticCard statistic={{ title: t('dashboard.addressBooks'), value: counts.ab }} />
+        <StatisticCard statistic={{ title: t('dashboard.tokens'), value: counts.tokens }} />
+      </div>
 
-        <ProCard split="vertical" gutter={16} wrap>
-          <ProCard
-            title={t('dashboard.auditChart')}
-            colSpan={{ xs: 24, md: 10 }}
-            style={{ minHeight: 340 }}
-
-          >
-            {pieData.length ? (
-              <Pie
-                data={pieData}
-                angleField="value"
-                colorField="type"
-                radius={0.72}
-                innerRadius={0.52}
-                legend={{ position: 'bottom', rowPadding: 4 }}
-                label={{
-                  text: (d: any) => `${d.type} ${d.value}`,
-                  position: 'outside',
-                  style: { fontSize: 12 },
-                }}
-                height={260}
-              />
-            ) : (
-              <div className="rd-muted" style={{ paddingTop: 120, textAlign: 'center' }}>
-                {t('common.noData')}
-              </div>
-            )}
-          </ProCard>
-          <ProCard title={t('dashboard.recentAudit')} colSpan={{ xs: 24, md: 14 }}>
-            <ProTable
-              rowKey="id"
-              search={false}
-              options={false}
-              pagination={false}
-              size="small"
-              dataSource={recent.slice(0, 8)}
-              columns={[
-                { title: t('fields.peerId'), dataIndex: 'guid' },
-                { title: t('fields.ip'), dataIndex: 'ip' },
-                {
-                  title: t('fields.result'),
-                  dataIndex: 'result',
-                  render: (_, r) => (
-                    <Tag color={r.result === 'ok' ? 'green' : 'red'}>
-                      {r.result === 'ok' ? t('audit.resultOk') : t('audit.resultFail')}
-                    </Tag>
-                  ),
-                },
-                {
-                  title: t('fields.reason'),
-                  dataIndex: 'reason',
-                  render: (_, r) => reasonLabel(r.reason, t),
-                },
-                { title: t('fields.createdAt'), dataIndex: 'created_at' },
-              ]}
+      <ProCard split="vertical" gutter={16} wrap style={{ marginTop: 16 }}>
+        <ProCard title={t('dashboard.auditChart')} colSpan={{ xs: 24, md: 10 }} style={{ minHeight: isMobile ? 300 : 340 }}>
+          {pieData.length ? (
+            <Pie
+              data={pieData}
+              angleField="value"
+              colorField="type"
+              radius={0.72}
+              innerRadius={0.52}
+              legend={{ position: 'bottom', rowPadding: 4 }}
+              height={isMobile ? 220 : 260}
+              label={
+                isMobile
+                  ? false
+                  : {
+                      text: (d: any) => `${d.type} ${d.value}`,
+                      position: 'outside',
+                      style: { fontSize: 12 },
+                    }
+              }
             />
-          </ProCard>
+          ) : (
+            <div className="rd-muted" style={{ paddingTop: 120, textAlign: 'center' }}>
+              {t('common.noData')}
+            </div>
+          )}
         </ProCard>
-      </Space>
+        <ProCard title={t('dashboard.recentAudit')} colSpan={{ xs: 24, md: 14 }}>
+          <ProTable
+            rowKey="id"
+            search={false}
+            options={false}
+            pagination={false}
+            size="small"
+            scroll={{ x: 520 }}
+            dataSource={recent.slice(0, isMobile ? 5 : 8)}
+            columns={[
+              { title: t('fields.peerId'), dataIndex: 'guid', ellipsis: true, width: 140 },
+              { title: t('fields.ip'), dataIndex: 'ip', width: 130, responsive: isMobile ? ['md'] : undefined },
+              {
+                title: t('fields.result'),
+                dataIndex: 'result',
+                width: 90,
+                render: (_, r) => (
+                  <Tag color={r.result === 'ok' ? 'green' : 'red'}>
+                    {r.result === 'ok' ? t('audit.resultOk') : t('audit.resultFail')}
+                  </Tag>
+                ),
+              },
+              {
+                title: t('fields.reason'),
+                dataIndex: 'reason',
+                width: 110,
+                render: (_, r) => reasonLabel(r.reason, t),
+              },
+              { title: t('fields.createdAt'), dataIndex: 'created_at', width: 160 },
+            ]}
+          />
+        </ProCard>
+      </ProCard>
     </PageContainer>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { PageContainer, ProTable, ProColumns, ModalForm, ProForm } from '@ant-design/pro-components';
-import { App, Button, Popconfirm, Tooltip } from 'antd';
+import { App, Button, Grid, Popconfirm, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProFormInstance } from '@ant-design/pro-components';
 import { batchRemove, create, list, remove, update } from '../api';
@@ -57,6 +57,8 @@ export default function CrudPage(props: CrudPageProps) {
 
   const t = useT();
   const { message } = App.useApp();
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
   const actionRef = useRef<ActionType>();
   const formRef = useRef<ProFormInstance>();
   const [editing, setEditing] = useState<any | null>(null);
@@ -82,7 +84,7 @@ export default function CrudPage(props: CrudPageProps) {
     title: t('common.actions'),
     valueType: 'option',
     key: 'option',
-    width: 132,
+    width: isMobile ? 96 : 132,
     fixed: 'right',
     render: (_, record) => (
       <div className="rd-row-actions">
@@ -123,9 +125,14 @@ export default function CrudPage(props: CrudPageProps) {
         actionRef={actionRef}
         rowKey={rowKey}
         columns={hasActions ? [...columns, actionColumn] : columns}
-        scroll={scrollX ? { x: scrollX } : undefined}
-        search={{ labelWidth: 'auto', defaultCollapsed: true }}
-        options={{ density: true, fullScreen: false, reload: true, setting: true }}
+        size={isMobile ? 'small' : undefined}
+        scroll={{ x: scrollX ?? 'max-content' }}
+        search={{
+          labelWidth: 'auto',
+          defaultCollapsed: true,
+          span: isMobile ? 24 : undefined,
+        }}
+        options={{ density: !isMobile, fullScreen: !isMobile, reload: true, setting: true }}
         pagination={{
           defaultPageSize: 20,
           showSizeChanger: true,
@@ -183,6 +190,7 @@ export default function CrudPage(props: CrudPageProps) {
         title={editing ? `${t('common.edit')} · ${title}` : `${t('common.create')} · ${title}`}
         open={open}
         formRef={formRef}
+        width={isMobile ? '94vw' : 680}
         modalProps={{ destroyOnHidden: true, onCancel: () => setOpen(false) }}
         initialValues={editing ? (toFormValues ? toFormValues(editing) : editing) : createDefaults}
         onFinish={async (values) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageContainer, ProForm, ProFormText } from '@ant-design/pro-components';
-import { App, Avatar, Card, Descriptions, Tag } from 'antd';
+import { App, Avatar, Card, Descriptions, Grid, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../auth';
@@ -24,7 +24,11 @@ export default function ProfilePage() {
             {user?.is_admin ? t('portal.roleAdmin') : t('portal.roleUser')}
           </Tag>
         </div>
-        <Descriptions column={2} style={{ marginTop: 24 }} size="small">
+        <Descriptions
+          column={{ xs: 1, sm: 1, md: 2 }}
+          style={{ marginTop: 24 }}
+          size="small"
+        >
           <Descriptions.Item label={t('fields.username')}>{user?.username || '-'}</Descriptions.Item>
           <Descriptions.Item label={t('fields.nickname')}>{user?.nickname || '-'}</Descriptions.Item>
           <Descriptions.Item label={t('fields.email')}>{user?.email || '-'}</Descriptions.Item>

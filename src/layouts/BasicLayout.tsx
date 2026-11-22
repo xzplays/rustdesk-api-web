@@ -14,6 +14,7 @@ import {
   LaptopOutlined,
   LoginOutlined,
   LogoutOutlined,
+  MenuOutlined,
   SettingOutlined,
   ShareAltOutlined,
   TagsOutlined,
@@ -35,6 +36,7 @@ export default function BasicLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [pwdOpen, setPwdOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [form] = Form.useForm();
 
   const isAdmin = !!user?.is_admin;
@@ -90,6 +92,18 @@ export default function BasicLayout() {
 
   const topbar = (
     <div className="rd-header">
+      <div className="rd-brand-mini">
+        <button
+          type="button"
+          className="rd-menu-btn"
+          aria-label="menu"
+          onClick={() => setCollapsed(false)}
+        >
+          <MenuOutlined />
+        </button>
+        <img src={logo} alt="RustDesk" className="rd-brand-mini-logo" />
+        <span className="rd-brand-mini-name">RustDesk</span>
+      </div>
       <div className="rd-header-actions">
         <Select
           size="small"
@@ -135,6 +149,9 @@ export default function BasicLayout() {
       layout="side"
       fixSiderbar
       siderWidth={228}
+      breakpoint="lg"
+      collapsed={collapsed}
+      onCollapse={(c) => setCollapsed(c)}
       location={{ pathname: location.pathname }}
       route={{ path: '/', routes: menuData }}
       menuItemRender={(item, dom) => <Link to={item.path || '/'}>{dom}</Link>}
