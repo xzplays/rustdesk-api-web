@@ -191,6 +191,12 @@ export const asyncRoutes = [
         component: () => import('@/views/audit/fileList.vue'),
       },
       {
+        path: '/auditLogin',
+        name: 'AuditLogin',
+        meta: { title: 'AuditLoginLog', icon: 'User' /*keepAlive: true*/ },
+        component: () => import('@/views/audit/loginList.vue'),
+      },
+      {
         path: '/shareRecord',
         name: 'ShareRecord',
         meta: { title: 'ShareRecord', icon: 'Share' /*keepAlive: true*/ },

@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { list, remove, fileList, fileRemove, batchDelete, fileBatchDelete } from '@/api/audit'
+import { list, remove, fileList, fileRemove, batchDelete, fileBatchDelete, loginList } from '@/api/audit'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatTime } from '@/utils/time'
 import { T } from '@/utils/i18n'
@@ -182,6 +182,55 @@ export function useFileRepositories () {
     handlerQuery,
     del,
     batchdel,
+    toExport,
+  }
+}
+
+export function useLoginRepositories () {
+  const listRes = reactive({
+    list: [], total: 0, loading: false,
+  })
+  const listQuery = reactive({
+    page: 1,
+    page_size: 10,
+    username: null,
+    guid: null,
+    result: null,
+  })
+
+  const getList = async () => {
+    listRes.loading = true
+    const res = await loginList(listQuery).catch(_ => false)
+    listRes.loading = false
+    if (res) {
+      listRes.list = res.data.list || []
+      listRes.total = res.data.total
+    }
+  }
+  const handlerQuery = () => {
+    if (listQuery.page === 1) {
+      getList()
+    } else {
+      listQuery.page = 1
+    }
+  }
+
+  const toExport = async () => {
+    const q = { ...listQuery }
+    q.page_size = 1000000
+    q.page = 1
+    const res = await loginList(q).catch(_ => false)
+    if (res) {
+      const csv = jsonToCsv(res.data.list || [])
+      downBlob(csv, 'audit_login.csv')
+    }
+  }
+
+  return {
+    listRes,
+    listQuery,
+    getList,
+    handlerQuery,
     toExport,
   }
 }

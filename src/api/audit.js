@@ -45,3 +45,10 @@ export function fileBatchDelete (data) {
     data,
   })
 }
+
+export function loginList (params) {
+  return request({
+    url: '/audit_login/list',
+    params,
+  })
+}

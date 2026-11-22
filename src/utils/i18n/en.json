@@ -531,5 +531,17 @@
   },
   "Remark": {
     "One": "Remark"
+  },
+  "AuditLoginLog": {
+    "One": "Login Log"
+  },
+  "Guid": {
+    "One": "Device ID"
+  },
+  "Reason": {
+    "One": "Reason"
+  },
+  "All": {
+    "One": "All"
   }
 }

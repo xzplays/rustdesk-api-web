@@ -547,5 +547,17 @@
   },
   "Remark": {
     "One": "备注"
+  },
+  "AuditLoginLog": {
+    "One": "登录日志"
+  },
+  "Guid": {
+    "One": "设备 ID"
+  },
+  "Reason": {
+    "One": "原因"
+  },
+  "All": {
+    "One": "全部"
   }
 }
