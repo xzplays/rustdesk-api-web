@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { GlobalOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, App, Button, Form, Input, Select } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth';
 import { loginOptions } from '../api';
-import { LANGS, setLang, type LangKey } from '../i18n';
+import { LANGS, setLang, useLang, useT } from '../i18n';
 import logo from '../assets/logo.svg';
 
 export default function RegisterPage() {
-  const { t, i18n } = useTranslation();
+  const t = useT();
+  const lang = useLang();
   const { message } = App.useApp();
   const { signUp } = useAuth();
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export default function RegisterPage() {
           <Select
             size="small"
             variant="borderless"
-            value={i18n.language as LangKey}
+            value={lang}
             options={LANGS.map((l) => ({ value: l.key, label: l.label }))}
             onChange={(v) => setLang(v)}
             prefix={<GlobalOutlined />}

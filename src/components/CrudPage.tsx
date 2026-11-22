@@ -3,8 +3,8 @@ import { PageContainer, ProTable, ProColumns, ModalForm, ProForm } from '@ant-de
 import { App, Button, Popconfirm, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProFormInstance } from '@ant-design/pro-components';
-import { useTranslation } from 'react-i18next';
 import { batchRemove, create, list, remove, update } from '../api';
+import { useT } from '../i18n';
 
 export interface CrudPageProps {
   module: string;
@@ -55,7 +55,7 @@ export default function CrudPage(props: CrudPageProps) {
     toFormValues,
   } = props;
 
-  const { t } = useTranslation();
+  const t = useT();
   const { message } = App.useApp();
   const actionRef = useRef<ActionType>();
   const formRef = useRef<ProFormInstance>();

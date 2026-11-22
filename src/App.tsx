@@ -5,7 +5,6 @@ import enUS from 'antd/locale/en_US';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import BasicLayout from './layouts/BasicLayout';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
@@ -24,6 +23,7 @@ import MyDevicesPage from './pages/portal/MyDevices';
 import MyAddressBookPage from './pages/portal/MyAddressBook';
 import ProfilePage from './pages/portal/Profile';
 import { useAuth } from './auth';
+import { useLang } from './i18n';
 
 function HomeRedirect() {
   const { user, loading } = useAuth();
@@ -32,8 +32,7 @@ function HomeRedirect() {
 }
 
 export default function App() {
-  const { i18n } = useTranslation();
-  const lang = i18n.language === 'en-US' ? 'en-US' : 'zh-CN';
+  const lang = useLang();
 
   useEffect(() => {
     dayjs.locale(lang === 'en-US' ? 'en' : 'zh-cn');

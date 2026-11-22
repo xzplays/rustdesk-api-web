@@ -22,14 +22,14 @@ import {
 } from '@ant-design/icons';
 import { App, Avatar, Dropdown, Form, Input, Modal, Select, Spin } from 'antd';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth';
 import { changePassword } from '../api';
-import { LANGS, setLang, type LangKey } from '../i18n';
+import { LANGS, setLang, useLang, useT, type LangKey } from '../i18n';
 import logo from '../assets/logo.svg';
 
 export default function BasicLayout() {
-  const { t, i18n } = useTranslation();
+  const t = useT();
+  const lang = useLang();
   const { message } = App.useApp();
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export default function BasicLayout() {
       { path: '/share-records', name: t('nav.shareRecords'), icon: <ShareAltOutlined /> },
       { path: '/settings', name: t('nav.settings'), icon: <SettingOutlined /> },
     ],
-    [t],
+    [t, lang],
   );
 
   const portalMenu = useMemo(
@@ -75,7 +75,7 @@ export default function BasicLayout() {
       { path: '/my/address-book', name: t('nav.myAddressBook'), icon: <BookOutlined /> },
       { path: '/my/profile', name: t('nav.profile'), icon: <IdcardOutlined /> },
     ],
-    [t],
+    [t, lang],
   );
 
   const menuData = isAdmin ? adminMenu : portalMenu;
@@ -94,7 +94,7 @@ export default function BasicLayout() {
         <Select
           size="small"
           variant="borderless"
-          value={i18n.language as LangKey}
+          value={lang}
           options={LANGS.map((l) => ({ value: l.key, label: l.label }))}
           onChange={(v) => setLang(v)}
           style={{ width: 118 }}
@@ -129,6 +129,7 @@ export default function BasicLayout() {
 
   return (
     <ProLayout
+      key={lang}
       title="RustDesk"
       logo={logo}
       layout="side"
