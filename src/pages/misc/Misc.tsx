@@ -101,9 +101,12 @@ export function OauthPage() {
             ]}
             rules={[{ required: true }]}
           />
-          <ProFormText name="client_id" label="Client ID" />
-          <ProFormText.Password name="client_secret" label="Client Secret" />
+          <ProFormText name="client_id" label="Client ID" rules={[{ required: true }]} />
+          <ProFormText.Password name="client_secret" label="Client Secret" rules={[{ required: true }]} />
+          <ProFormText name="issuer" label="Issuer (OIDC)" placeholder="https://example.com" />
+          <ProFormText name="scopes" label="Scopes" placeholder="openid profile email" />
           <ProFormSwitch name="auto_register" label="自动注册" />
+          <ProFormSwitch name="pkce_enable" label="启用 PKCE" />
         </>
       }
     />
