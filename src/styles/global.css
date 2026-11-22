@@ -1,0 +1,17 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #f5f6fa;
+}
+
+/* Login page fills the viewport with the gradient from Login.tsx */
+.ant-pro-form-login-page {
+  background: transparent !important;
+}
