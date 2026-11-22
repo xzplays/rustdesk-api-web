@@ -1,42 +1,77 @@
 import React from 'react';
 import { ProColumns } from '@ant-design/pro-components';
-import { Badge, Tag } from 'antd';
+import { Badge, Grid, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import CrudPage from '@/components/CrudPage';
 import { AUDIT_REASONS, reasonLabel } from '@/utils/labels';
 
 export function AuditLoginPage() {
   const { t } = useTranslation();
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
   const reasonEnum = Object.fromEntries(AUDIT_REASONS.map((r) => [r, { text: reasonLabel(r, t) }]));
 
-  const columns: ProColumns<any>[] = [
-    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false, responsive: ['md'] },
-    { title: t('fields.peerId'), dataIndex: 'guid', width: 150 },
-    { title: t('fields.uuid'), dataIndex: 'uuid', search: false, ellipsis: true, responsive: ['lg'] },
-    { title: t('fields.ip'), dataIndex: 'ip', width: 140 },
-    { title: t('fields.username'), dataIndex: 'username', width: 120 },
-    { title: t('fields.userId'), dataIndex: 'user_id', width: 90, search: false },
-    {
-      title: t('fields.result'),
-      dataIndex: 'result',
-      width: 150,
-      valueType: 'select',
-      valueEnum: reasonEnum,
-      render: (_, r) => (
-        <Tag color={r.result === 'ok' ? 'green' : 'red'}>
-          {r.result === 'ok' ? t('audit.resultOk') : t('audit.resultFail')}
-        </Tag>
-      ),
-    },
-    {
-      title: t('fields.reason'),
-      dataIndex: 'reason',
-      search: false,
-      ellipsis: true,
-      render: (_, r) => reasonLabel(r.reason, t),
-    },
-    { title: t('fields.createdAt'), dataIndex: 'created_at', search: false, width: 170 },
-  ];
+  const idColumn: ProColumns<any> = {
+    title: t('fields.id'),
+    dataIndex: 'id',
+    width: 70,
+    search: false,
+    responsive: ['md'],
+  };
+  const peerColumn: ProColumns<any> = {
+    title: t('fields.peerId'),
+    dataIndex: 'guid',
+    width: isMobile ? 112 : 150,
+  };
+  const resultColumn: ProColumns<any> = {
+    title: t('fields.result'),
+    dataIndex: 'result',
+    width: isMobile ? 84 : 150,
+    valueType: 'select',
+    valueEnum: reasonEnum,
+    render: (_, r) => (
+      <Tag color={r.result === 'ok' ? 'green' : 'red'}>
+        {r.result === 'ok' ? t('audit.resultOk') : t('audit.resultFail')}
+      </Tag>
+    ),
+  };
+  const reasonColumn: ProColumns<any> = {
+    title: t('fields.reason'),
+    dataIndex: 'reason',
+    search: false,
+    width: isMobile ? 120 : undefined,
+    ellipsis: true,
+    render: (_, r) => reasonLabel(r.reason, t),
+  };
+  const createdColumn: ProColumns<any> = {
+    title: t('fields.createdAt'),
+    dataIndex: 'created_at',
+    search: false,
+    width: 170,
+  };
+  const ipColumn: ProColumns<any> = { title: t('fields.ip'), dataIndex: 'ip', width: 140 };
+  const userColumn: ProColumns<any> = {
+    title: t('fields.username'),
+    dataIndex: 'username',
+    width: 120,
+  };
+  const userIdColumn: ProColumns<any> = {
+    title: t('fields.userId'),
+    dataIndex: 'user_id',
+    width: 90,
+    search: false,
+  };
+  const uuidColumn: ProColumns<any> = {
+    title: t('fields.uuid'),
+    dataIndex: 'uuid',
+    search: false,
+    ellipsis: true,
+  };
+
+  // On phones the verdict must be visible without scrolling, so it moves up.
+  const columns: ProColumns<any>[] = isMobile
+    ? [peerColumn, resultColumn, reasonColumn, createdColumn, ipColumn, userColumn, userIdColumn, idColumn, uuidColumn]
+    : [idColumn, peerColumn, uuidColumn, ipColumn, userColumn, userIdColumn, resultColumn, reasonColumn, createdColumn];
 
   return (
     <CrudPage
