@@ -1,91 +1,128 @@
-import React, { useRef, useState } from 'react';
-import { ProColumns, ProFormText, ProFormSelect, ProFormSwitch, ProFormDigit } from '@ant-design/pro-components';
-import { Button, Form, Input, Modal, message } from 'antd';
+import React, { useState } from 'react';
+import {
+  ProColumns,
+  ProFormDigit,
+  ProFormSelect,
+  ProFormSwitch,
+  ProFormText,
+} from '@ant-design/pro-components';
+import { App, Button, Form, Input, Modal } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import CrudPage from '@/components/CrudPage';
-import { raw } from '@/api';
-import { list } from '@/api';
-
-const statusOptions = [
-  { label: '启用', value: 1 },
-  { label: '禁用', value: 0 },
-];
+import { list, raw } from '@/api';
 
 export default function UsersPage() {
+  const { t } = useTranslation();
+  const { message } = App.useApp();
   const [pwdUser, setPwdUser] = useState<any | null>(null);
   const [form] = Form.useForm();
 
   const columns: ProColumns<any>[] = [
-    { title: 'ID', dataIndex: 'id', width: 70, search: false },
-    { title: '用户名', dataIndex: 'username' },
-    { title: '昵称', dataIndex: 'nickname', search: false },
-    { title: '邮箱', dataIndex: 'email', search: false, copyable: true },
+    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
+    { title: t('fields.username'), dataIndex: 'username' },
+    { title: t('fields.nickname'), dataIndex: 'nickname', search: false },
+    { title: t('fields.email'), dataIndex: 'email', search: false, copyable: true },
     {
-      title: '管理员',
+      title: t('fields.isAdmin'),
       dataIndex: 'is_admin',
       search: false,
-      width: 90,
-      render: (_, r) => (r.is_admin ? '是' : '否'),
+      width: 96,
+      render: (_, r) => (r.is_admin ? t('common.yes') : t('common.no')),
     },
     {
-      title: '状态',
+      title: t('fields.status'),
       dataIndex: 'status',
-      width: 90,
+      width: 96,
       valueType: 'select',
-      valueEnum: { 1: { text: '启用', status: 'Success' }, 0: { text: '禁用', status: 'Error' } },
+      valueEnum: {
+        1: { text: t('common.enabled'), status: 'Success' },
+        0: { text: t('common.disabled'), status: 'Error' },
+      },
     },
-    { title: '创建时间', dataIndex: 'created_at', search: false, width: 170 },
+    { title: t('fields.createdAt'), dataIndex: 'created_at', search: false, width: 170 },
+    { title: t('fields.remark'), dataIndex: 'remark', search: false, ellipsis: true },
   ];
 
   return (
     <>
       <CrudPage
         module="user"
-        title="用户"
+        title={t('pages.users')}
         columns={columns}
         rowActions={(record) => (
           <a key="pwd" onClick={() => setPwdUser(record)}>
-            <KeyOutlined /> 密码
+            <KeyOutlined /> {t('common.changePassword')}
           </a>
         )}
         formItems={
           <>
-            <ProFormText name="username" label="用户名" rules={[{ required: true }]} />
-            <ProFormText name="nickname" label="昵称" />
-            <ProFormText name="email" label="邮箱" />
+            <ProFormText name="username" label={t('fields.username')} rules={[{ required: true }]} />
+            <ProFormText name="nickname" label={t('fields.nickname')} />
+            <ProFormText name="email" label={t('fields.email')} />
             <ProFormSelect
               name="group_id"
-              label="用户组"
+              label={t('nav.groups')}
               request={async () => {
                 const res = await list('group', { page: 1, page_size: 100 });
                 return (res.list || []).map((g: any) => ({ label: g.name, value: g.id }));
               }}
-              rules={[{ required: true, message: '请选择用户组' }]}
+              rules={[{ required: true }]}
             />
-            <ProFormSwitch name="is_admin" label="管理员" />
-            <ProFormSelect name="status" label="状态" options={statusOptions} initialValue={1} />
-            <ProFormText name="remark" label="备注" />
+            <ProFormSwitch name="is_admin" label={t('fields.isAdmin')} />
+            <ProFormSelect
+              name="status"
+              label={t('fields.status')}
+              options={[
+                { label: t('common.enabled'), value: 1 },
+                { label: t('common.disabled'), value: 0 },
+              ]}
+              initialValue={1}
+            />
+            <ProFormText name="remark" label={t('fields.remark')} />
           </>
         }
         createDefaults={{ status: 1, is_admin: false, group_id: 1 }}
       />
 
       <Modal
-        title={`重置密码 - ${pwdUser?.username || ''}`}
+        title={`${t('common.changePassword')} · ${pwdUser?.username || ''}`}
         open={!!pwdUser}
         onCancel={() => setPwdUser(null)}
         onOk={async () => {
           const v = await form.validateFields();
           await raw('/api/admin/user/changePwd', 'POST', { id: pwdUser.id, password: v.password });
-          message.success('密码已重置');
+          message.success(t('common.saved'));
           form.resetFields();
           setPwdUser(null);
         }}
-        destroyOnClose
+        destroyOnHidden
+        footer={[
+          <Button key="c" onClick={() => setPwdUser(null)}>
+            {t('common.cancel')}
+          </Button>,
+          <Button
+            key="ok"
+            type="primary"
+            onClick={async () => {
+              const v = await form.validateFields();
+              await raw('/api/admin/user/changePwd', 'POST', { id: pwdUser.id, password: v.password });
+              message.success(t('common.saved'));
+              form.resetFields();
+              setPwdUser(null);
+            }}
+          >
+            {t('common.save')}
+          </Button>,
+        ]}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="password" label="新密码" rules={[{ required: true, min: 4 }]}>
-            <Input.Password />
+          <Form.Item
+            name="password"
+            label={t('portal.newPassword')}
+            rules={[{ required: true, min: 4 }]}
+          >
+            <Input.Password autoComplete="new-password" />
           </Form.Item>
         </Form>
       </Modal>

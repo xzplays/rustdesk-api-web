@@ -21,6 +21,8 @@ export interface AdminUser {
   remark: string;
   created_at: string;
   updated_at: string;
+  route_names?: string[];
+  token?: string;
 }
 
 export async function login(username: string, password: string): Promise<LoginResult> {
@@ -28,6 +30,75 @@ export async function login(username: string, password: string): Promise<LoginRe
     url: '/api/admin/login',
     method: 'POST',
     data: { username, password },
+  });
+}
+
+export interface LoginOptions {
+  ops: string[];
+  register: boolean;
+  need_captcha: boolean;
+  disable_pwd: boolean;
+  auto_oidc: boolean;
+}
+
+export async function loginOptions(): Promise<LoginOptions> {
+  return request<LoginOptions>({ url: '/api/admin/login-options', method: 'GET' });
+}
+
+export async function register(data: {
+  username: string;
+  email?: string;
+  nickname?: string;
+  password: string;
+  confirm_password: string;
+}): Promise<LoginResult> {
+  return request<LoginResult>({ url: '/api/admin/user/register', method: 'POST', data });
+}
+
+export interface MyPeer {
+  row_id: number;
+  id: string;
+  uuid: string;
+  alias: string;
+  hostname: string;
+  os: string;
+  version: string;
+  last_online_ip: string;
+  last_online_time: number;
+  info?: any;
+}
+
+export async function myPeers(page = 1, pageSize = 20) {
+  return request<{ list: MyPeer[]; page: number; total: number; page_size: number }>({
+    url: `/api/my/peers?page=${page}&page_size=${pageSize}`,
+    method: 'GET',
+  });
+}
+
+export async function myPeerUpdate(row_id: number, alias: string) {
+  return request({ url: '/api/my/peer/update', method: 'POST', data: { row_id, alias } });
+}
+
+export async function myPeerUnbind(row_id: number) {
+  return request({ url: '/api/my/peer/unbind', method: 'POST', data: { row_id } });
+}
+
+export interface MyAddressBookEntry {
+  row_id: number;
+  id: string;
+  username: string;
+  hostname: string;
+  alias: string;
+  platform: string;
+  tags: string[] | null;
+  online: boolean;
+  collection_id: number;
+}
+
+export async function myAddressBook(page = 1, pageSize = 50) {
+  return request<{ list: MyAddressBookEntry[]; page: number; total: number; page_size: number }>({
+    url: `/api/my/address_book?page=${page}&page_size=${pageSize}`,
+    method: 'GET',
   });
 }
 

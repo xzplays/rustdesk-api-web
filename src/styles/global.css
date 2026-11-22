@@ -11,7 +11,169 @@ body {
   background: #f5f6fa;
 }
 
-/* Login page fills the viewport with the gradient from Login.tsx */
-.ant-pro-form-login-page {
-  background: transparent !important;
+/* ---------- auth (login / register) ---------- */
+.auth-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #fff;
 }
+
+.auth-brand {
+  position: relative;
+  flex: 1 1 52%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  color: #fff;
+  background: radial-gradient(1200px 600px at 10% 10%, #2f6bff 0%, #1a3f9c 45%, #0d1f4d 100%);
+  overflow: hidden;
+}
+
+.auth-brand::after {
+  content: '';
+  position: absolute;
+  right: -140px;
+  bottom: -180px;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.auth-brand-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 460px;
+}
+
+.auth-points {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.auth-points li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.auth-points li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 11px;
+  color: #fff;
+}
+
+.auth-panel {
+  position: relative;
+  flex: 1 1 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background: #fff;
+}
+
+.auth-panel .ant-pro-form-login-container {
+  width: 100%;
+  max-width: 380px;
+  min-width: 0;
+}
+
+.auth-panel .ant-pro-form-login-main {
+  width: 100%;
+}
+
+.auth-lang {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .auth-brand {
+    display: none;
+  }
+  .auth-panel {
+    flex: 1 1 100%;
+  }
+}
+
+/* ---------- content ---------- */
+.ant-pro-page-container-children-container {
+  padding-block-end: 24px;
+}
+
+.rd-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .rd-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rd-muted {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+.rd-nowrap {
+  white-space: nowrap;
+}
+
+.rd-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 56px;
+  padding: 0 4px;
+  margin-bottom: 8px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.rd-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rd-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.rd-user:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.rd-user-name {
+  font-size: 14px;
+  color: #1f2329;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

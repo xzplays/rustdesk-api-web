@@ -1,13 +1,15 @@
 import React, { useRef, useState } from 'react';
-import { ProTable, ProColumns, ModalForm, ProForm } from '@ant-design/pro-components';
-import { Button, Popconfirm, Space, message } from 'antd';
+import { PageContainer, ProTable, ProColumns, ModalForm, ProForm } from '@ant-design/pro-components';
+import { App, Button, Popconfirm } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProFormInstance } from '@ant-design/pro-components';
+import { useTranslation } from 'react-i18next';
 import { batchRemove, create, list, remove, update } from '../api';
 
 export interface CrudPageProps {
   module: string;
   title: string;
+  description?: string;
   rowKey?: string;
   columns: ProColumns<any>[];
   /** ProForm children used by the create/edit modal. */
@@ -36,6 +38,7 @@ export default function CrudPage(props: CrudPageProps) {
   const {
     module,
     title,
+    description,
     rowKey = 'id',
     columns,
     formItems,
@@ -52,6 +55,8 @@ export default function CrudPage(props: CrudPageProps) {
     toFormValues,
   } = props;
 
+  const { t } = useTranslation();
+  const { message } = App.useApp();
   const actionRef = useRef<ActionType>();
   const formRef = useRef<ProFormInstance>();
   const [editing, setEditing] = useState<any | null>(null);
@@ -71,30 +76,32 @@ export default function CrudPage(props: CrudPageProps) {
   const hasActions = canEdit || canDelete || !!rowActions;
 
   const actionColumn: ProColumns<any> = {
-    title: '操作',
+    title: t('common.actions'),
     valueType: 'option',
     key: 'option',
-    width: 180,
+    width: 168,
     fixed: 'right',
     render: (_, record) => [
-      ...(rowActions ? [rowActions(record)] : []),
+      ...(rowActions ? [<React.Fragment key="extra">{rowActions(record)}</React.Fragment>] : []),
       canEdit ? (
         <a key="edit" onClick={() => openEdit(record)}>
-          <EditOutlined /> 编辑
+          <EditOutlined /> {t('common.edit')}
         </a>
       ) : null,
       canDelete ? (
         <Popconfirm
           key="del"
-          title="确认删除这条记录？"
+          title={t('common.confirmDelete')}
+          okText={t('common.confirm')}
+          cancelText={t('common.cancel')}
           onConfirm={async () => {
             await remove(module, record[rowKey]);
-            message.success('已删除');
+            message.success(t('common.deleted'));
             actionRef.current?.reload();
           }}
         >
           <a style={{ color: '#ff4d4f' }}>
-            <DeleteOutlined /> 删除
+            <DeleteOutlined /> {t('common.delete')}
           </a>
         </Popconfirm>
       ) : null,
@@ -102,15 +109,16 @@ export default function CrudPage(props: CrudPageProps) {
   };
 
   return (
-    <>
+    <PageContainer title={title} subTitle={description} ghost>
       <ProTable<any>
         actionRef={actionRef}
         rowKey={rowKey}
-        headerTitle={title}
         columns={hasActions ? [...columns, actionColumn] : columns}
         scroll={scrollX ? { x: scrollX } : undefined}
         search={{ labelWidth: 'auto', defaultCollapsed: true }}
-        pagination={{ defaultPageSize: 20, showSizeChanger: true }}
+        options={{ density: true, fullScreen: false, reload: true, setting: true }}
+        pagination={{ defaultPageSize: 20, showSizeChanger: true, showTotal: (n) => `${n}` }}
+        cardBordered
         rowSelection={
           canBatchDelete
             ? {
@@ -134,33 +142,35 @@ export default function CrudPage(props: CrudPageProps) {
           canBatchDelete ? (
             <Popconfirm
               key="batch"
-              title={`确认删除选中的 ${selected.length} 条记录？`}
+              title={t('common.batchDeleteConfirm', { count: selected.length })}
+              okText={t('common.confirm')}
+              cancelText={t('common.cancel')}
               disabled={!selected.length}
               onConfirm={async () => {
                 await batchRemove(module, selected as any[], batchIdKey);
-                message.success('已批量删除');
+                message.success(t('common.deleted'));
                 setSelected([]);
                 actionRef.current?.reload();
               }}
             >
               <Button danger disabled={!selected.length}>
-                批量删除
+                {t('common.batchDelete')}
               </Button>
             </Popconfirm>
           ) : null,
           canCreate ? (
             <Button key="create" type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-              新建
+              {t('common.create')}
             </Button>
           ) : null,
         ]}
       />
 
       <ModalForm
-        title={editing ? `编辑${title}` : `新建${title}`}
+        title={editing ? `${t('common.edit')} · ${title}` : `${t('common.create')} · ${title}`}
         open={open}
         formRef={formRef}
-        modalProps={{ destroyOnClose: true, onCancel: () => setOpen(false) }}
+        modalProps={{ destroyOnHidden: true, onCancel: () => setOpen(false) }}
         initialValues={editing ? (toFormValues ? toFormValues(editing) : editing) : createDefaults}
         onFinish={async (values) => {
           if (editing) {
@@ -168,7 +178,7 @@ export default function CrudPage(props: CrudPageProps) {
           } else {
             await create(module, values);
           }
-          message.success('已保存');
+          message.success(t('common.saved'));
           setOpen(false);
           actionRef.current?.reload();
           return true;
@@ -176,6 +186,6 @@ export default function CrudPage(props: CrudPageProps) {
       >
         <ProForm.Group>{formItems}</ProForm.Group>
       </ModalForm>
-    </>
+    </PageContainer>
   );
 }

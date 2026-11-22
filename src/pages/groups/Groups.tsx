@@ -1,35 +1,41 @@
 import React from 'react';
-import { ProColumns, ProFormText, ProFormSelect } from '@ant-design/pro-components';
+import { ProColumns, ProFormSelect, ProFormText } from '@ant-design/pro-components';
+import { useTranslation } from 'react-i18next';
 import CrudPage from '@/components/CrudPage';
 
-const columns: ProColumns<any>[] = [
-  { title: 'ID', dataIndex: 'id', width: 70, search: false },
-  { title: '名称', dataIndex: 'name' },
-  {
-    title: '类型',
-    dataIndex: 'type',
-    width: 120,
-    valueType: 'select',
-    valueEnum: { 1: { text: '默认组' }, 2: { text: '共享组' } },
-  },
-  { title: '创建时间', dataIndex: 'created_at', search: false, width: 170 },
-];
-
 export default function GroupsPage() {
+  const { t } = useTranslation();
+
+  const columns: ProColumns<any>[] = [
+    { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
+    { title: t('fields.name'), dataIndex: 'name' },
+    {
+      title: t('fields.type'),
+      dataIndex: 'type',
+      width: 140,
+      valueType: 'select',
+      valueEnum: {
+        1: { text: t('fields.defaultGroup') },
+        2: { text: t('fields.sharedGroup') },
+      },
+    },
+    { title: t('fields.createdAt'), dataIndex: 'created_at', search: false, width: 170 },
+  ];
+
   return (
     <CrudPage
       module="group"
-      title="用户组"
+      title={t('pages.groups')}
       columns={columns}
       formItems={
         <>
-          <ProFormText name="name" label="名称" rules={[{ required: true }]} />
+          <ProFormText name="name" label={t('fields.name')} rules={[{ required: true }]} />
           <ProFormSelect
             name="type"
-            label="类型"
+            label={t('fields.type')}
             options={[
-              { label: '默认组', value: 1 },
-              { label: '共享组', value: 2 },
+              { label: t('fields.defaultGroup'), value: 1 },
+              { label: t('fields.sharedGroup'), value: 2 },
             ]}
             initialValue={1}
           />

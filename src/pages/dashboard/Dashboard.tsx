@@ -1,7 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ProCard, StatisticCard, ProTable } from '@ant-design/pro-components';
+import {
+  PageContainer,
+  ProCard,
+  ProTable,
+  StatisticCard,
+} from '@ant-design/pro-components';
 import { Pie } from '@ant-design/charts';
-import { Space, Tag } from 'antd';
+import { Button, Space, Tag } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../auth';
 import { list } from '@/api';
 
 async function countOf(module: string) {
@@ -14,6 +22,8 @@ async function countOf(module: string) {
 }
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
   const [counts, setCounts] = useState({ users: 0, peers: 0, ab: 0, tokens: 0 });
   const [recent, setRecent] = useState<any[]>([]);
 
@@ -38,54 +48,76 @@ export default function DashboardPage() {
   }, [recent]);
 
   return (
-    <Space direction="vertical" size={16} style={{ width: '100%' }}>
-      <StatisticCard.Group>
-        <StatisticCard statistic={{ title: '用户总数', value: counts.users }} />
-        <StatisticCard statistic={{ title: '设备总数', value: counts.peers }} />
-        <StatisticCard statistic={{ title: '地址簿条目', value: counts.ab }} />
-        <StatisticCard statistic={{ title: '有效令牌', value: counts.tokens }} />
-      </StatisticCard.Group>
+    <PageContainer
+      title={t('nav.dashboard')}
+      subTitle={t('dashboard.welcome', { name: user?.nickname || user?.username || 'admin' })}
+      ghost
+      extra={[
+        <Button
+          key="dl"
+          icon={<DownloadOutlined />}
+          href="/dl/RustDesk-xzplay-portable.zip"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {t('portal.clientDownload')}
+        </Button>,
+      ]}
+    >
+      <Space orientation="vertical" size={16} style={{ width: '100%' }}>
+        <StatisticCard.Group>
+          <StatisticCard statistic={{ title: t('dashboard.users'), value: counts.users }} />
+          <StatisticCard statistic={{ title: t('dashboard.peers'), value: counts.peers }} />
+          <StatisticCard statistic={{ title: t('dashboard.addressBooks'), value: counts.ab }} />
+          <StatisticCard statistic={{ title: t('dashboard.tokens'), value: counts.tokens }} />
+        </StatisticCard.Group>
 
-      <ProCard split="vertical" gutter={16} wrap>
-        <ProCard title="登录审计结果分布" colSpan={{ xs: 24, md: 10 }} style={{ minHeight: 320 }}>
-          {pieData.length ? (
-            <Pie
-              data={pieData}
-              angleField="value"
-              colorField="type"
-              radius={0.85}
-              innerRadius={0.5}
-              legend={{ position: 'bottom' }}
-              label={{ text: (d: any) => `${d.type}: ${d.value}` }}
-              height={260}
+        <ProCard split="vertical" gutter={16} wrap>
+          <ProCard
+            title={t('dashboard.auditChart')}
+            colSpan={{ xs: 24, md: 10 }}
+            style={{ minHeight: 340 }}
+
+          >
+            {pieData.length ? (
+              <Pie
+                data={pieData}
+                angleField="value"
+                colorField="type"
+                radius={0.85}
+                innerRadius={0.5}
+                legend={{ position: 'bottom' }}
+                label={{ text: (d: any) => `${d.type}: ${d.value}` }}
+                height={260}
+              />
+            ) : (
+              <div className="rd-muted" style={{ paddingTop: 120, textAlign: 'center' }}>
+                {t('common.noData')}
+              </div>
+            )}
+          </ProCard>
+          <ProCard title={t('dashboard.recentAudit')} colSpan={{ xs: 24, md: 14 }}>
+            <ProTable
+              rowKey="id"
+              search={false}
+              options={false}
+              pagination={false}
+              size="small"
+              dataSource={recent.slice(0, 8)}
+              columns={[
+                { title: t('fields.peerId'), dataIndex: 'guid' },
+                { title: t('fields.ip'), dataIndex: 'ip' },
+                {
+                  title: t('fields.result'),
+                  dataIndex: 'result',
+                  render: (_, r) => <Tag color={r.result === 'ok' ? 'green' : 'red'}>{r.result}</Tag>,
+                },
+                { title: t('fields.createdAt'), dataIndex: 'created_at' },
+              ]}
             />
-          ) : (
-            <div style={{ color: '#999', paddingTop: 100, textAlign: 'center' }}>暂无审计数据</div>
-          )}
+          </ProCard>
         </ProCard>
-        <ProCard title="最近登录审计" colSpan={{ xs: 24, md: 14 }}>
-          <ProTable
-            rowKey="id"
-            search={false}
-            options={false}
-            pagination={false}
-            size="small"
-            dataSource={recent.slice(0, 8)}
-            columns={[
-              { title: '设备 ID', dataIndex: 'guid' },
-              { title: 'IP', dataIndex: 'ip' },
-              {
-                title: '结果',
-                dataIndex: 'result',
-                render: (_, r) => (
-                  <Tag color={r.result === 'ok' ? 'green' : 'red'}>{r.result}</Tag>
-                ),
-              },
-              { title: '时间', dataIndex: 'created_at' },
-            ]}
-          />
-        </ProCard>
-      </ProCard>
-    </Space>
+      </Space>
+    </PageContainer>
   );
 }
