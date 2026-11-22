@@ -51,6 +51,7 @@ export function CollectionRulesPage() {
       columns={cols}
       formItems={
         <>
+          <ProFormDigit name="user_id" label="收藏所属用户 ID" min={1} initialValue={1} tooltip="地址簿收藏的拥有者" rules={[{ required: true }]} />
           <ProFormDigit name="collection_id" label="收藏 ID" min={1} rules={[{ required: true }]} />
           <ProFormSelect name="rule" label="权限" options={[
             { label: '只读', value: 1 },
@@ -61,7 +62,7 @@ export function CollectionRulesPage() {
             { label: '个人', value: 1 },
             { label: '群组', value: 2 },
           ]} initialValue={1} rules={[{ required: true }]} />
-          <ProFormDigit name="to_id" label="目标 ID (用户/群组)" min={1} rules={[{ required: true }]} />
+          <ProFormDigit name="to_id" label="目标 ID (用户/群组)" min={1} tooltip="个人填用户 ID，群组填用户组 ID" rules={[{ required: true }]} />
         </>
       }
     />
