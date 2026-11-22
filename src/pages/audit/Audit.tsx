@@ -3,12 +3,11 @@ import { ProColumns } from '@ant-design/pro-components';
 import { Badge, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import CrudPage from '@/components/CrudPage';
-
-const reasons = ['ok', 'token is empty', 'token not found', 'token expired', 'user not found', 'user disabled'];
+import { AUDIT_REASONS, reasonLabel } from '@/utils/labels';
 
 export function AuditLoginPage() {
   const { t } = useTranslation();
-  const reasonEnum = Object.fromEntries(reasons.map((r) => [r, { text: r }]));
+  const reasonEnum = Object.fromEntries(AUDIT_REASONS.map((r) => [r, { text: reasonLabel(r, t) }]));
 
   const columns: ProColumns<any>[] = [
     { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
@@ -23,9 +22,19 @@ export function AuditLoginPage() {
       width: 150,
       valueType: 'select',
       valueEnum: reasonEnum,
-      render: (_, r) => <Tag color={r.result === 'ok' ? 'green' : 'red'}>{r.result || '-'}</Tag>,
+      render: (_, r) => (
+        <Tag color={r.result === 'ok' ? 'green' : 'red'}>
+          {r.result === 'ok' ? t('audit.resultOk') : t('audit.resultFail')}
+        </Tag>
+      ),
     },
-    { title: t('fields.reason'), dataIndex: 'reason', search: false, ellipsis: true },
+    {
+      title: t('fields.reason'),
+      dataIndex: 'reason',
+      search: false,
+      ellipsis: true,
+      render: (_, r) => reasonLabel(r.reason, t),
+    },
     { title: t('fields.createdAt'), dataIndex: 'created_at', search: false, width: 170 },
   ];
 
@@ -53,12 +62,15 @@ export function AuditConnPage() {
       dataIndex: 'action',
       width: 110,
       valueType: 'select',
-      valueEnum: { new: { text: 'new' }, close: { text: 'close' } },
+      valueEnum: {
+        new: { text: t('audit.actionNew') },
+        close: { text: t('audit.actionClose') },
+      },
       render: (_, r) =>
         r.action === 'new' ? (
-          <Badge status="processing" text="new" />
+          <Badge status="processing" text={t('audit.actionNew')} />
         ) : (
-          <Badge status="default" text={r.action} />
+          <Badge status="default" text={t('audit.actionClose')} />
         ),
     },
     { title: t('fields.peerId'), dataIndex: 'peer_id', width: 150 },
@@ -116,3 +128,4 @@ export function AuditFilePage() {
     />
   );
 }
+

@@ -6,7 +6,7 @@ import {
   ProFormSwitch,
   ProFormText,
 } from '@ant-design/pro-components';
-import { App, Button, Form, Input, Modal } from 'antd';
+import { App, Button, Form, Input, Modal, Tooltip } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import CrudPage from '@/components/CrudPage';
@@ -20,9 +20,9 @@ export default function UsersPage() {
 
   const columns: ProColumns<any>[] = [
     { title: t('fields.id'), dataIndex: 'id', width: 70, search: false },
-    { title: t('fields.username'), dataIndex: 'username' },
-    { title: t('fields.nickname'), dataIndex: 'nickname', search: false },
-    { title: t('fields.email'), dataIndex: 'email', search: false, copyable: true },
+    { title: t('fields.username'), dataIndex: 'username', width: 160 },
+    { title: t('fields.nickname'), dataIndex: 'nickname', search: false, width: 140 },
+    { title: t('fields.email'), dataIndex: 'email', search: false, copyable: true, width: 220, ellipsis: true },
     {
       title: t('fields.isAdmin'),
       dataIndex: 'is_admin',
@@ -41,7 +41,7 @@ export default function UsersPage() {
       },
     },
     { title: t('fields.createdAt'), dataIndex: 'created_at', search: false, width: 170 },
-    { title: t('fields.remark'), dataIndex: 'remark', search: false, ellipsis: true },
+    { title: t('fields.remark'), dataIndex: 'remark', search: false, width: 110, ellipsis: true },
   ];
 
   return (
@@ -51,9 +51,14 @@ export default function UsersPage() {
         title={t('pages.users')}
         columns={columns}
         rowActions={(record) => (
-          <a key="pwd" onClick={() => setPwdUser(record)}>
-            <KeyOutlined /> {t('common.changePassword')}
-          </a>
+          <Tooltip title={t('common.changePassword')}>
+            <Button
+              type="text"
+              size="small"
+              icon={<KeyOutlined />}
+              onClick={() => setPwdUser(record)}
+            />
+          </Tooltip>
         )}
         formItems={
           <>
@@ -129,3 +134,6 @@ export default function UsersPage() {
     </>
   );
 }
+
+
+

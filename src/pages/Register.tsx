@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { GlobalOutlined, LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
-import { Alert, App, Select } from 'antd';
+import { Alert, App, Button, Form, Input, Select } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth';
@@ -15,6 +14,7 @@ export default function RegisterPage() {
   const { signUp } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     loginOptions()
@@ -24,19 +24,24 @@ export default function RegisterPage() {
 
   return (
     <div className="auth-shell">
-      <div className="auth-brand">
-        <div className="auth-brand-inner">
-          <img src={logo} alt="RustDesk" width={56} height={56} />
-          <h2 style={{ color: '#fff', marginTop: 20, fontSize: 28 }}>{t('register.title')}</h2>
-          <p style={{ color: 'rgba(255,255,255,.78)', fontSize: 15 }}>{t('register.subtitle')}</p>
+      <aside className="auth-brand">
+        <div className="auth-brand-top">
+          <img src={logo} alt="" width={32} height={32} />
+          <span>RustDesk</span>
+        </div>
+        <div className="auth-brand-body">
+          <h1 className="auth-brand-title">{t('register.brandTitle')}</h1>
+          <p className="auth-brand-desc">{t('register.brandDesc')}</p>
           <ul className="auth-points">
-            <li>{t('login.brandPoint1')}</li>
-            <li>{t('login.brandPoint2')}</li>
+            <li>{t('register.brandPoint1')}</li>
+            <li>{t('register.brandPoint2')}</li>
+            <li>{t('register.brandPoint3')}</li>
           </ul>
         </div>
-      </div>
+        <div className="auth-brand-foot">{t('app.footer')}</div>
+      </aside>
 
-      <div className="auth-panel">
+      <main className="auth-panel">
         <div className="auth-lang">
           <Select
             size="small"
@@ -45,87 +50,121 @@ export default function RegisterPage() {
             options={LANGS.map((l) => ({ value: l.key, label: l.label }))}
             onChange={(v) => setLang(v)}
             prefix={<GlobalOutlined />}
-            style={{ width: 108 }}
+            popupMatchSelectWidth={false}
           />
         </div>
-        <LoginForm
-          logo={logo}
-          title={t('register.title')}
-          subTitle={t('register.subtitle')}
-          submitter={{ searchConfig: { submitText: t('register.submit') } }}
-          onFinish={async (values) => {
-            if (open === false) {
-              message.error(t('register.closed'));
-              return false;
-            }
-            try {
-              await signUp({
-                username: values.username as string,
-                email: (values.email as string) || '',
-                nickname: (values.nickname as string) || '',
-                password: values.password as string,
-                confirm_password: values.confirm_password as string,
-              });
-              message.success(t('register.success'));
-              navigate('/my/devices', { replace: true });
-              return true;
-            } catch {
-              return false;
-            }
-          }}
-        >
+
+        <div className="auth-card">
+          <header className="auth-head">
+            <h2 className="auth-title">{t('register.title')}</h2>
+            <p className="auth-desc">{t('register.subtitle')}</p>
+          </header>
+
           {open === false ? (
-            <Alert type="warning" showIcon title={t('register.closed')} style={{ marginBottom: 16 }} />
+            <Alert type="warning" showIcon title={t('register.closed')} className="auth-alert" />
           ) : null}
-          <ProFormText
-            name="username"
-            fieldProps={{ size: 'large', prefix: <UserOutlined />, autoComplete: 'username' }}
-            placeholder={t('register.username')}
-            rules={[
-              { required: true, message: t('login.usernameRequired') },
-              { min: 2, max: 32, message: t('register.usernameRule') },
-            ]}
-          />
-          <ProFormText
-            name="nickname"
-            fieldProps={{ size: 'large', prefix: <UserOutlined /> }}
-            placeholder={t('register.nickname')}
-          />
-          <ProFormText
-            name="email"
-            fieldProps={{ size: 'large', prefix: <MailOutlined />, autoComplete: 'email' }}
-            placeholder={t('register.email')}
-            rules={[{ type: 'email', message: t('register.email') }]}
-          />
-          <ProFormText.Password
-            name="password"
-            fieldProps={{ size: 'large', prefix: <LockOutlined />, autoComplete: 'new-password' }}
-            placeholder={t('register.password')}
-            rules={[
-              { required: true, message: t('login.passwordRequired') },
-              { min: 4, message: t('register.passwordRule') },
-            ]}
-          />
-          <ProFormText.Password
-            name="confirm_password"
-            fieldProps={{ size: 'large', prefix: <LockOutlined />, autoComplete: 'new-password' }}
-            placeholder={t('register.confirmPassword')}
-            dependencies={['password']}
-            rules={[
-              { required: true, message: t('login.passwordRequired') },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) return Promise.resolve();
-                  return Promise.reject(new Error(t('register.passwordMismatch')));
-                },
-              }),
-            ]}
-          />
-          <div style={{ marginTop: 4 }}>
-            <Link to="/login">{t('register.back')}</Link>
-          </div>
-        </LoginForm>
-      </div>
+
+          <Form
+            layout="vertical"
+            requiredMark={false}
+            size="large"
+            onFinish={async (values) => {
+              if (open === false) {
+                message.error(t('register.closed'));
+                return;
+              }
+              setSubmitting(true);
+              try {
+                await signUp({
+                  username: values.username as string,
+                  email: (values.email as string) || '',
+                  nickname: (values.nickname as string) || '',
+                  password: values.password as string,
+                  confirm_password: values.confirm_password as string,
+                });
+                message.success(t('register.success'));
+                navigate('/my/devices', { replace: true });
+              } catch {
+                /* the request layer already reported the failure */
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+          >
+            <Form.Item
+              name="username"
+              rules={[
+                { required: true, message: t('login.usernameRequired') },
+                { min: 2, max: 32, message: t('register.usernameRule') },
+              ]}
+            >
+              <Input
+                prefix={<UserOutlined />}
+                placeholder={t('register.usernamePlaceholder')}
+                autoComplete="username"
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item name="nickname">
+              <Input
+                prefix={<UserOutlined />}
+                placeholder={t('register.nicknamePlaceholder')}
+                autoComplete="nickname"
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item name="email" rules={[{ type: 'email', message: t('register.emailInvalid') }]}>
+              <Input
+                prefix={<MailOutlined />}
+                placeholder={t('register.emailPlaceholder')}
+                autoComplete="email"
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                { required: true, message: t('login.passwordRequired') },
+                { min: 4, message: t('register.passwordRule') },
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder={t('register.passwordPlaceholder')}
+                autoComplete="new-password"
+              />
+            </Form.Item>
+            <Form.Item
+              name="confirm_password"
+              dependencies={['password']}
+              rules={[
+                { required: true, message: t('register.confirmRequired') },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('password') === value) return Promise.resolve();
+                    return Promise.reject(new Error(t('register.passwordMismatch')));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder={t('register.confirmPlaceholder')}
+                autoComplete="new-password"
+              />
+            </Form.Item>
+            <Form.Item className="auth-submit">
+              <Button type="primary" htmlType="submit" block loading={submitting}>
+                {t('register.submit')}
+              </Button>
+            </Form.Item>
+          </Form>
+
+          <p className="auth-switch">
+            {t('register.haveAccount')} <Link to="/login">{t('register.back')}</Link>
+          </p>
+        </div>
+      </main>
     </div>
   );
 }

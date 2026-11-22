@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { App as AntdApp, ConfigProvider, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
@@ -42,6 +42,7 @@ export default function App() {
   const config = useMemo(
     () => ({
       locale: lang === 'en-US' ? enUS : zhCN,
+      button: { autoInsertSpace: false },
       theme: {
         algorithm: theme.defaultAlgorithm,
         token: {

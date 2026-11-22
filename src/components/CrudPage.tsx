@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { PageContainer, ProTable, ProColumns, ModalForm, ProForm } from '@ant-design/pro-components';
-import { App, Button, Popconfirm } from 'antd';
+import { App, Button, Popconfirm, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProFormInstance } from '@ant-design/pro-components';
 import { useTranslation } from 'react-i18next';
@@ -75,41 +75,50 @@ export default function CrudPage(props: CrudPageProps) {
 
   const hasActions = canEdit || canDelete || !!rowActions;
 
+  const descKey = `pages.${module.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())}Desc`;
+  const subTitle = description ?? t(descKey, { defaultValue: '' });
+
   const actionColumn: ProColumns<any> = {
     title: t('common.actions'),
     valueType: 'option',
     key: 'option',
-    width: 168,
+    width: 132,
     fixed: 'right',
-    render: (_, record) => [
-      ...(rowActions ? [<React.Fragment key="extra">{rowActions(record)}</React.Fragment>] : []),
-      canEdit ? (
-        <a key="edit" onClick={() => openEdit(record)}>
-          <EditOutlined /> {t('common.edit')}
-        </a>
-      ) : null,
-      canDelete ? (
-        <Popconfirm
-          key="del"
-          title={t('common.confirmDelete')}
-          okText={t('common.confirm')}
-          cancelText={t('common.cancel')}
-          onConfirm={async () => {
-            await remove(module, record[rowKey]);
-            message.success(t('common.deleted'));
-            actionRef.current?.reload();
-          }}
-        >
-          <a style={{ color: '#ff4d4f' }}>
-            <DeleteOutlined /> {t('common.delete')}
-          </a>
-        </Popconfirm>
-      ) : null,
-    ],
+    render: (_, record) => (
+      <div className="rd-row-actions">
+        {rowActions ? rowActions(record) : null}
+        {canEdit ? (
+          <Tooltip title={t('common.edit')}>
+            <Button
+              type="text"
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => openEdit(record)}
+            />
+          </Tooltip>
+        ) : null}
+        {canDelete ? (
+          <Popconfirm
+            title={t('common.confirmDelete')}
+            okText={t('common.confirm')}
+            cancelText={t('common.cancel')}
+            onConfirm={async () => {
+              await remove(module, record[rowKey]);
+              message.success(t('common.deleted'));
+              actionRef.current?.reload();
+            }}
+          >
+            <Tooltip title={t('common.delete')}>
+              <Button type="text" size="small" danger icon={<DeleteOutlined />} />
+            </Tooltip>
+          </Popconfirm>
+        ) : null}
+      </div>
+    ),
   };
 
   return (
-    <PageContainer title={title} subTitle={description} ghost>
+    <PageContainer title={title} subTitle={subTitle || undefined} ghost>
       <ProTable<any>
         actionRef={actionRef}
         rowKey={rowKey}
@@ -117,7 +126,11 @@ export default function CrudPage(props: CrudPageProps) {
         scroll={scrollX ? { x: scrollX } : undefined}
         search={{ labelWidth: 'auto', defaultCollapsed: true }}
         options={{ density: true, fullScreen: false, reload: true, setting: true }}
-        pagination={{ defaultPageSize: 20, showSizeChanger: true, showTotal: (n) => `${n}` }}
+        pagination={{
+          defaultPageSize: 20,
+          showSizeChanger: true,
+          showTotal: (n) => t('common.total', { total: n }),
+        }}
         cardBordered
         rowSelection={
           canBatchDelete
@@ -189,3 +202,4 @@ export default function CrudPage(props: CrudPageProps) {
     </PageContainer>
   );
 }
+

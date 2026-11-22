@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { GlobalOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { App, Select, Typography } from 'antd';
+import { App, Button, Form, Input, Select } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth';
@@ -9,14 +8,13 @@ import { loginOptions } from '../api';
 import { LANGS, setLang, type LangKey } from '../i18n';
 import logo from '../assets/logo.svg';
 
-const { Title, Paragraph } = Typography;
-
 export default function LoginPage() {
   const { t, i18n } = useTranslation();
   const { message } = App.useApp();
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const [canRegister, setCanRegister] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     loginOptions()
@@ -26,24 +24,24 @@ export default function LoginPage() {
 
   return (
     <div className="auth-shell">
-      <div className="auth-brand">
-        <div className="auth-brand-inner">
-          <img src={logo} alt="RustDesk" width={56} height={56} />
-          <Title level={2} style={{ color: '#fff', marginTop: 20 }}>
-            {t('login.brandTitle')}
-          </Title>
-          <Paragraph style={{ color: 'rgba(255,255,255,.78)', fontSize: 15 }}>
-            {t('app.subtitle')}
-          </Paragraph>
+      <aside className="auth-brand">
+        <div className="auth-brand-top">
+          <img src={logo} alt="" width={32} height={32} />
+          <span>RustDesk</span>
+        </div>
+        <div className="auth-brand-body">
+          <h1 className="auth-brand-title">{t('login.brandTitle')}</h1>
+          <p className="auth-brand-desc">{t('login.brandDesc')}</p>
           <ul className="auth-points">
             <li>{t('login.brandPoint1')}</li>
             <li>{t('login.brandPoint2')}</li>
             <li>{t('login.brandPoint3')}</li>
           </ul>
         </div>
-      </div>
+        <div className="auth-brand-foot">{t('app.footer')}</div>
+      </aside>
 
-      <div className="auth-panel">
+      <main className="auth-panel">
         <div className="auth-lang">
           <Select
             size="small"
@@ -52,44 +50,68 @@ export default function LoginPage() {
             options={LANGS.map((l) => ({ value: l.key, label: l.label }))}
             onChange={(v) => setLang(v)}
             prefix={<GlobalOutlined />}
-            style={{ width: 108 }}
+            popupMatchSelectWidth={false}
           />
         </div>
-        <LoginForm
-          logo={logo}
-          title="RustDesk"
-          subTitle={t('login.subtitle')}
-          onFinish={async (values) => {
-            try {
-              const res = await signIn(values.username as string, values.password as string);
-              message.success(t('login.success'));
-              navigate(res.is_admin ? '/dashboard' : '/my/devices', { replace: true });
-              return true;
-            } catch {
-              message.error(t('login.failed'));
-              return false;
-            }
-          }}
-        >
-          <ProFormText
-            name="username"
-            fieldProps={{ size: 'large', prefix: <UserOutlined />, autoComplete: 'username' }}
-            placeholder={t('login.username')}
-            rules={[{ required: true, message: t('login.usernameRequired') }]}
-          />
-          <ProFormText.Password
-            name="password"
-            fieldProps={{ size: 'large', prefix: <LockOutlined />, autoComplete: 'current-password' }}
-            placeholder={t('login.password')}
-            rules={[{ required: true, message: t('login.passwordRequired') }]}
-          />
+
+        <div className="auth-card">
+          <header className="auth-head">
+            <h2 className="auth-title">{t('login.title')}</h2>
+            <p className="auth-desc">{t('login.subtitle')}</p>
+          </header>
+
+          <Form
+            layout="vertical"
+            requiredMark={false}
+            size="large"
+            onFinish={async (values) => {
+              setSubmitting(true);
+              try {
+                const res = await signIn(values.username as string, values.password as string);
+                message.success(t('login.success'));
+                navigate(res.is_admin ? '/dashboard' : '/my/devices', { replace: true });
+              } catch {
+                message.error(t('login.failed'));
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+          >
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: t('login.usernameRequired') }]}
+            >
+              <Input
+                prefix={<UserOutlined />}
+                placeholder={t('login.usernamePlaceholder')}
+                autoComplete="username"
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: t('login.passwordRequired') }]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder={t('login.passwordPlaceholder')}
+                autoComplete="current-password"
+              />
+            </Form.Item>
+            <Form.Item className="auth-submit">
+              <Button type="primary" htmlType="submit" block loading={submitting}>
+                {t('login.submit')}
+              </Button>
+            </Form.Item>
+          </Form>
+
           {canRegister ? (
-            <div style={{ textAlign: 'right', marginTop: -4 }}>
-              <Link to="/register">{t('login.toRegister')}</Link>
-            </div>
+            <p className="auth-switch">
+              {t('login.noAccount')} <Link to="/register">{t('login.toRegister')}</Link>
+            </p>
           ) : null}
-        </LoginForm>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

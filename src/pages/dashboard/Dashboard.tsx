@@ -11,6 +11,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../auth';
 import { list } from '@/api';
+import { reasonLabel } from '@/utils/labels';
 
 async function countOf(module: string) {
   try {
@@ -43,9 +44,12 @@ export default function DashboardPage() {
 
   const pieData = useMemo(() => {
     const map = new Map<string, number>();
-    recent.forEach((r) => map.set(r.result || 'unknown', (map.get(r.result || 'unknown') || 0) + 1));
+    recent.forEach((r) => {
+      const key = reasonLabel(r.reason || r.result, t);
+      map.set(key, (map.get(key) || 0) + 1);
+    });
     return Array.from(map.entries()).map(([type, value]) => ({ type, value }));
-  }, [recent]);
+  }, [recent, t]);
 
   return (
     <PageContainer
@@ -84,10 +88,14 @@ export default function DashboardPage() {
                 data={pieData}
                 angleField="value"
                 colorField="type"
-                radius={0.85}
-                innerRadius={0.5}
-                legend={{ position: 'bottom' }}
-                label={{ text: (d: any) => `${d.type}: ${d.value}` }}
+                radius={0.72}
+                innerRadius={0.52}
+                legend={{ position: 'bottom', rowPadding: 4 }}
+                label={{
+                  text: (d: any) => `${d.type} ${d.value}`,
+                  position: 'outside',
+                  style: { fontSize: 12 },
+                }}
                 height={260}
               />
             ) : (
@@ -110,7 +118,16 @@ export default function DashboardPage() {
                 {
                   title: t('fields.result'),
                   dataIndex: 'result',
-                  render: (_, r) => <Tag color={r.result === 'ok' ? 'green' : 'red'}>{r.result}</Tag>,
+                  render: (_, r) => (
+                    <Tag color={r.result === 'ok' ? 'green' : 'red'}>
+                      {r.result === 'ok' ? t('audit.resultOk') : t('audit.resultFail')}
+                    </Tag>
+                  ),
+                },
+                {
+                  title: t('fields.reason'),
+                  dataIndex: 'reason',
+                  render: (_, r) => reasonLabel(r.reason, t),
                 },
                 { title: t('fields.createdAt'), dataIndex: 'created_at' },
               ]}
@@ -121,3 +138,4 @@ export default function DashboardPage() {
     </PageContainer>
   );
 }
+
