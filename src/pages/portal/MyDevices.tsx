@@ -21,16 +21,16 @@ export default function MyDevicesPage() {
   const [editing, setEditing] = useState<MyPeer | null>(null);
 
   const columns: ProColumns<MyPeer>[] = [
-    { title: t('fields.peerId'), dataIndex: 'id', copyable: true, width: 150, search: false },
-    { title: t('fields.alias'), dataIndex: 'alias', width: 140, search: false },
-    { title: t('fields.hostname'), dataIndex: 'hostname', width: 160, search: false },
-    { title: t('fields.os'), dataIndex: 'os', width: 150, ellipsis: true, search: false },
-    { title: t('fields.version'), dataIndex: 'version', width: 90, search: false },
-    { title: t('fields.lastOnlineIp'), dataIndex: 'last_online_ip', width: 140, search: false },
+    { title: t('fields.peerId'), dataIndex: 'id', copyable: true, width: 140, search: false },
+    { title: t('fields.alias'), dataIndex: 'alias', width: 110, search: false },
+    { title: t('fields.hostname'), dataIndex: 'hostname', width: 130, search: false },
+    { title: t('fields.os'), dataIndex: 'os', width: 130, ellipsis: true, search: false },
+    { title: t('fields.version'), dataIndex: 'version', width: 60, search: false },
+    { title: t('fields.lastOnlineIp'), dataIndex: 'last_online_ip', width: 110, search: false },
     {
       title: t('fields.lastOnlineTime'),
       dataIndex: 'last_online_time',
-      width: 180,
+      width: 170,
       search: false,
       render: (_, r) =>
         r.last_online_time
@@ -40,8 +40,7 @@ export default function MyDevicesPage() {
     {
       title: t('common.actions'),
       valueType: 'option',
-      width: 190,
-      fixed: 'right',
+      width: 160,
       render: (_, record) => [
         <a key="rename" onClick={() => setEditing(record)}>
           <EditOutlined /> {t('portal.rename')}
@@ -73,6 +72,7 @@ export default function MyDevicesPage() {
         cardBordered
         columns={columns}
         search={false}
+        scroll={{ x: 1010 }}
         options={{ reload: true, density: true, setting: true }}
         pagination={{ defaultPageSize: 20, showSizeChanger: true }}
         request={async (params) => {

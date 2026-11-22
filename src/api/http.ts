@@ -37,7 +37,9 @@ instance.interceptors.request.use((config) => {
   const token = getToken();
   if (token) {
     config.headers = config.headers || {};
+    // admin endpoints authenticate with api-token, user (/api/my/*) endpoints with Bearer
     (config.headers as any)['api-token'] = token;
+    (config.headers as any)['Authorization'] = `Bearer ${token}`;
   }
   return config;
 });

@@ -1,12 +1,10 @@
 import React from 'react';
 import { PageContainer, ProForm, ProFormText } from '@ant-design/pro-components';
-import { App, Avatar, Card, Descriptions, Tag, Typography } from 'antd';
+import { App, Avatar, Card, Descriptions, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../auth';
 import { changePassword } from '../../api';
-
-const { Text } = Typography;
 
 export default function ProfilePage() {
   const { t } = useTranslation();
@@ -23,16 +21,16 @@ export default function ProfilePage() {
             <div className="rd-muted">{user?.email || '—'}</div>
           </div>
           <Tag color={user?.is_admin ? 'blue' : 'default'}>
-            {user?.is_admin ? t('fields.isAdmin') : t('fields.username')}
+            {user?.is_admin ? t('portal.roleAdmin') : t('portal.roleUser')}
           </Tag>
         </div>
         <Descriptions column={2} style={{ marginTop: 24 }} size="small">
           <Descriptions.Item label={t('fields.username')}>{user?.username || '-'}</Descriptions.Item>
           <Descriptions.Item label={t('fields.nickname')}>{user?.nickname || '-'}</Descriptions.Item>
           <Descriptions.Item label={t('fields.email')}>{user?.email || '-'}</Descriptions.Item>
-          <Descriptions.Item label={t('fields.groupId')}>{user?.group_id ?? '-'}</Descriptions.Item>
-          <Descriptions.Item label={t('fields.createdAt')}>{user?.created_at || '-'}</Descriptions.Item>
-          <Descriptions.Item label={t('fields.remark')}>{user?.remark || '-'}</Descriptions.Item>
+          <Descriptions.Item label={t('portal.role')}>
+            {user?.is_admin ? t('portal.roleAdmin') : t('portal.roleUser')}
+          </Descriptions.Item>
         </Descriptions>
       </Card>
 
@@ -78,9 +76,6 @@ export default function ProfilePage() {
             fieldProps={{ autoComplete: 'new-password' }}
           />
         </ProForm>
-        <Text type="secondary" className="rd-muted">
-          {t('portal.configTitle')}
-        </Text>
       </Card>
     </PageContainer>
   );

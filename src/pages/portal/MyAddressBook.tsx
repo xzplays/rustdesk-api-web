@@ -44,6 +44,7 @@ export default function MyAddressBookPage() {
           const res = await myAddressBook(params.current || 1, params.pageSize || 20);
           return { data: res.list, success: true, total: res.total };
         }}
+        locale={{ emptyText: t('portal.emptyAddressBook') }}
       />
     </PageContainer>
   );
