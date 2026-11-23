@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { message } from 'antd';
+import i18n from '@/i18n';
 
 const TOKEN_KEY = 'rd_admin_token';
 
@@ -55,7 +56,7 @@ instance.interceptors.response.use(
         location.hash = '#/login';
       }
     }
-    const text = body?.message || body?.error || error.message || '请求失败';
+    const text = body?.message || body?.error || error.message || i18n.t('common.requestFailed');
     message.error(text);
     return Promise.reject(error);
   },
@@ -70,7 +71,7 @@ export async function request<T = any>(config: AxiosRequestConfig): Promise<T> {
   const body = resp.data;
   if (body && typeof body === 'object' && 'code' in body) {
     if (body.code !== 0) {
-      message.error(body.message || '请求失败');
+      message.error(body.message || i18n.t('common.requestFailed'));
       throw new Error(body.message || `code ${body.code}`);
     }
     return body.data as T;

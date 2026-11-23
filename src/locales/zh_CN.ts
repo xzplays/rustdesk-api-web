@@ -30,6 +30,7 @@ const zhCN = {
     portal: '个人中心',
   },
   common: {
+    requestFailed: '请求失败',
     search: '查询',
     reset: '重置',
     create: '新建',

@@ -30,6 +30,7 @@ const enUS = {
     portal: 'My space',
   },
   common: {
+    requestFailed: 'Request failed',
     search: 'Search',
     reset: 'Reset',
     create: 'New',
