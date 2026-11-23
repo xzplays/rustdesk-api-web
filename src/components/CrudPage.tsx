@@ -128,6 +128,7 @@ export default function CrudPage(props: CrudPageProps) {
         size={isMobile ? 'small' : undefined}
         scroll={{ x: scrollX ?? 'max-content' }}
         search={{
+          filterType: isMobile ? 'light' : 'query',
           labelWidth: 'auto',
           defaultCollapsed: true,
           span: isMobile ? 24 : undefined,
